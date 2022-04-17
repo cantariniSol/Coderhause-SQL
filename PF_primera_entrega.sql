@@ -37,14 +37,15 @@ pago VARCHAR(20) NOT NULL);
 -- ### 6. FACTURAS
 CREATE TABLE facturas(
 factura_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-fecha DATETIME,
-tipo_pago INT NOT NULL,
-importe DECIMAL(18,2) NOT NULL,
-detalle VARCHAR(150),
+fecha_emitida DATETIME,
+reserva INT NOT NULL, 
+pago_total DECIMAL(18, 2) DEFAULT '0',
 moneda VARCHAR(15),
+tipo_pago INT NOT NULL,
 nombre_banco VARCHAR(30),
 num_tarjeta VARCHAR(16), 
-nom_prop_tarjeta VARCHAR(60), 
+nom_prop_tarjeta VARCHAR(45),
+FOREIGN KEY(reserva) REFERENCES reservas(reserva_id),
 FOREIGN KEY(tipo_pago) REFERENCES tipos_pagos(tipo_pago_id));
 
 -- ### 7. CLIENTES
@@ -55,11 +56,9 @@ contacto INT NOT NULL,
 pais INT NOT NULL,
 tipo_documento INT NOT NULL,
 num_documento VARCHAR(15) NOT NULL,
-factura INT NOT NULL,
 FOREIGN KEY(pais) REFERENCES paises(pais_id),
 FOREIGN KEY(contacto) REFERENCES contactos(contacto_id),
-FOREIGN KEY(tipo_documento) REFERENCES tipos_documentos(tipo_doc_id),
-FOREIGN KEY(factura) REFERENCES facturas(factura_id));
+FOREIGN KEY(tipo_documento) REFERENCES tipos_documentos(tipo_doc_id));
 
 -- ### 8. HOTELES
 CREATE TABLE hoteles(
@@ -92,8 +91,10 @@ estado TINYINT(1) NOT NULL DEFAULT '0',
 tipo_habitacion INT NOT NULL,
 num_habitacion INT NOT NULL,
 piso_habitacion INT NOT NULL,
+hotel INT NOT NULL,
 descripcion VARCHAR(150),
-FOREIGN KEY(tipo_habitacion) REFERENCES tipos_habitaciones(tipo_habitacion_id));
+FOREIGN KEY(tipo_habitacion) REFERENCES tipos_habitaciones(tipo_habitacion_id),
+FOREIGN KEY(hotel) REFERENCES hoteles(hotel_id));
 
 -- ### 12. RESERVAS
 CREATE TABLE reservas(
@@ -102,10 +103,8 @@ cliente INT NOT NULL,
 habitacion INT NOT NULL,
 fecha_desde DATETIME NOT NULL,
 fecha_hasta DATETIME NOT NULL,
-hotel INT NOT NULL,
 FOREIGN KEY(cliente) REFERENCES clientes(cliente_id),
-FOREIGN KEY(habitacion) REFERENCES habitaciones(habitacion_id),
-FOREIGN KEY(hotel) REFERENCES hoteles(hotel_id));
+FOREIGN KEY(habitacion) REFERENCES habitaciones(habitacion_id));
 
 -- ### 13. SECTORES
 CREATE TABLE sectores(
